@@ -98,7 +98,7 @@ def main():
     intitule_keywords = intitule_poste.split('&')
     filtered_df = filtered_df[filtered_df['Intitulé du poste'].str.contains('|'.join(intitule_keywords), case=False, na=False)]
 
-    final_df = filtered_df[['Organisme de rattachement', 'Intitulé du poste', 'Localisation du poste', 'Date de première publication', 'Référence']]
+    final_df = filtered_df[['Organisme de rattachement', 'Intitulé du poste', 'Localisation du poste', 'Date de première publication', 'Référence', 'Catégorie', 'Versant', 'Nature de l\'emploi']]
     final_df['Date de première publication'] = pd.to_datetime(final_df['Date de première publication'], format='%d/%m/%Y', errors='coerce')
     final_df['Lien'] = 'https://choisirleservicepublic.gouv.fr/nos-offres/filtres/mot-cles/' + final_df['Référence'].astype(str) + '/'
 
@@ -130,7 +130,7 @@ def main():
             ),
         },
         hide_index=True,
-        column_order=['Organisme de rattachement', 'Intitulé du poste', 'Localisation du poste', 'Date de première publication', 'Référence', 'Intitulé du poste cliquable']
+        column_order=['Organisme de rattachement', 'Intitulé du poste', 'Localisation du poste', 'Date de première publication', 'Intitulé du poste cliquable', 'Référence', 'Catégorie', 'Versant', 'Nature de l\'emploi']
     )
     st.markdown("""
     <p style='text-align: right;'>Application créée par <a href='https://www.linkedin.com/in/benjaminazoulay/' target='_blank'>Benjamin Azoulay</a></p>
