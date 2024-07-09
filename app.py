@@ -51,11 +51,7 @@ def get_unique_values(series):
 # Main function to run the app
 def main():
     # Banner
-    st.markdown("""
-        <div style='background-color: #F5F5F5; padding: 10px; color: black; text-align: center; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);'>
-            <h1 style='font-size: 24px; font-weight: bold; margin: 0;'>Pôle Emploi public</h1>
-        </div>
-    """, unsafe_allow_html=True)
+    st.title('Pôle Emploi public')
 
     st.write("")  # Add some space
 
