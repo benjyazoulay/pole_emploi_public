@@ -78,7 +78,7 @@ def main():
 
 
     localisation_options = get_unique_values(df['Localisation du poste'])
-    localisation_poste = st.sidebar.multiselect("Localisation du poste", options=localisation_options, default=[l for l in localisation_options if re.search(r'Paris|91|92|93|94|95|77|78', l)])
+    localisation_poste = st.sidebar.multiselect("Localisation du poste", options=localisation_options, default=[l for l in localisation_options if re.search(r'Paris|91|92|93|94|95|\(77|\(78', l)])
 
     if st.sidebar.button("Mettre à jour la base (lundi)"):
         new_df = update_dataframe()
@@ -132,6 +132,9 @@ def main():
         hide_index=True,
         column_order=['Organisme de rattachement', 'Intitulé du poste', 'Localisation du poste', 'Date de première publication', 'Référence', 'Intitulé du poste cliquable']
     )
+    st.markdown("""
+    <p style='text-align: right;'>Application créée par <a href='https://www.linkedin.com/in/benjaminazoulay/' target='_blank'>Benjamin Azoulay</a></p>
+""", unsafe_allow_html=True)
     # Download buttons
     csv = final_df.to_csv(index=False).encode('utf-8')
     excel = io.BytesIO()
