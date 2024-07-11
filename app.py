@@ -98,6 +98,12 @@ def main():
     final_df['Date de première publication'] = pd.to_datetime(final_df['Date de première publication'], format='%d/%m/%Y', errors='coerce')
     final_df['Lien'] = 'https://choisirleservicepublic.gouv.fr/nos-offres/filtres/mot-cles/' + final_df['Référence'].astype(str) + '/'
 
+    # Download buttons
+    csv = final_df.to_csv(index=False).encode('utf-8')
+    excel = io.BytesIO()
+    final_df.to_excel(excel, index=False, engine='openpyxl')
+    excel.seek(0)
+
     # Create clickable job titles
     final_df['Intitulé du poste'] = final_df.apply(lambda row: f'<a href="{row["Lien"]}" target="_blank">{row["Intitulé du poste"]}</a>', axis=1)
     final_df = final_df.sort_values(by='Date de première publication', ascending=False)
@@ -127,11 +133,7 @@ def main():
     <p style='text-align: right;'>Application créée par <a href='https://www.linkedin.com/in/benjaminazoulay/' target='_blank'>Benjamin Azoulay</a></p>
 """, unsafe_allow_html=True)
     
-    # Download buttons
-    csv = final_df.to_csv(index=False).encode('utf-8')
-    excel = io.BytesIO()
-    final_df.to_excel(excel, index=False, engine='openpyxl')
-    excel.seek(0)
+    
 
     # Move download buttons to sidebar
     st.sidebar.header("Télécharger les données")
