@@ -103,7 +103,7 @@ def main():
     final_df = final_df.sort_values(by='Date de première publication', ascending=False)
     
     lundi = (datetime.now() - timedelta(days=datetime.now().weekday() + 1)).strftime("%d-%m-%Y")
-    st.write(f"Nombre d'offres correspondantes au {lundi} : {final_df.shape[0]}")
+    st.write(f"{final_df.shape[0]} offres correspondantes au {lundi}")
     # Afficher le dataframe avec les liens configurés
     st.dataframe(
         final_df,
