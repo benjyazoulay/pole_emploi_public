@@ -61,7 +61,7 @@ def main():
     # Sidebar
     st.sidebar.header("Filtres")
 
-    intitule_poste = st.sidebar.text_input("Intitulé du poste", value="data&Data&générative& IA&LLM")
+    intitule_poste = st.sidebar.text_input("Intitulé du poste", value="data&générative& IA&LLM")
 
     versant_options = get_unique_values(df['Versant'])
     versant = st.sidebar.multiselect("Versant", options=versant_options, default=[v for v in versant_options if 'Etat' in v])
@@ -101,8 +101,9 @@ def main():
     # Assurez-vous que les intitulés de poste contiennent les liens
     final_df['Intitulé du poste cliquable'] = final_df.apply(lambda row: row['Lien'], axis=1)
     final_df = final_df.sort_values(by='Date de première publication', ascending=False)
-
-
+    
+    lundi = (datetime.now() - timedelta(days=datetime.now().weekday() + 1)).strftime("%d-%m-%Y")
+    st.write(f"Nombre d'offres correspondantes au {lundi} : {final_df.shape[0]}")
     # Afficher le dataframe avec les liens configurés
     st.dataframe(
         final_df,
