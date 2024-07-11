@@ -99,7 +99,7 @@ def main():
     final_df['Lien'] = 'https://choisirleservicepublic.gouv.fr/nos-offres/filtres/mot-cles/' + final_df['Référence'].astype(str) + '/'
 
     # Create clickable job titles
-    final_df['Intitulé du poste cliquable'] = final_df.apply(lambda row: f'<a href="{row["Lien"]}" target="_blank">{row["Intitulé du poste"]}</a>', axis=1)
+    final_df['Intitulé du poste'] = final_df.apply(lambda row: f'<a href="{row["Lien"]}" target="_blank">{row["Intitulé du poste"]}</a>', axis=1)
     final_df = final_df.sort_values(by='Date de première publication', ascending=False)
 
     lundi = (datetime.now() - timedelta(days=datetime.now().weekday() + 1)).strftime("%d-%m-%Y")
@@ -118,7 +118,7 @@ def main():
     st.markdown(table_style, unsafe_allow_html=True)
 
     # Convert the dataframe to HTML and apply custom classes
-    html_table = final_df[['Organisme de rattachement', 'Intitulé du poste cliquable', 'Localisation du poste', 'Date de première publication', 'Référence', 'Catégorie', 'Versant', 'Nature de l\'emploi']].to_html(escape=False, index=False, classes='dataframe')
+    html_table = final_df[['Organisme de rattachement', 'Intitulé du poste', 'Localisation du poste', 'Date de première publication', 'Référence', 'Catégorie', 'Versant', 'Nature de l\'emploi']].to_html(escape=False, index=False, classes='dataframe')
     
     # Display the styled table
     st.markdown(html_table, unsafe_allow_html=True)
