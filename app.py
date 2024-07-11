@@ -98,47 +98,74 @@ def main():
     final_df['Date de première publication'] = pd.to_datetime(final_df['Date de première publication'], format='%d/%m/%Y', errors='coerce')
     final_df['Lien'] = 'https://choisirleservicepublic.gouv.fr/nos-offres/filtres/mot-cles/' + final_df['Référence'].astype(str) + '/'
 
-    # Assurez-vous que les intitulés de poste contiennent les liens
-    final_df['Intitulé du poste cliquable'] = final_df.apply(lambda row: row['Lien'], axis=1)
-    final_df = final_df.sort_values(by='Date de première publication', ascending=False)
-    
     lundi = (datetime.now() - timedelta(days=datetime.now().weekday() + 1)).strftime("%d-%m-%Y")
-    st.write(f"{final_df.shape[0]} offres correspondantes au {lundi}")
-    # Afficher le dataframe avec les liens configurés
-    st.dataframe(
-        final_df,
-        column_config={
-            "Intitulé du poste cliquable": st.column_config.LinkColumn(
-                label="Lien",
-                help="Cliquez pour voir l'offre",
-                display_text="(?:)",  # Utilisation d'une regex pour extraire le texte de l'URL
-            ),
-            "Date de première publication": st.column_config.DateColumn(
-                label="Date de première publication", 
-                format="DD/MM/YYYY"
-            ),
-            "Lien": st.column_config.Column(
-                label="Lien", 
-                disabled=True
-            ),
-            "Intitulé du poste": st.column_config.Column(
-                label="Intitulé du poste", 
-                disabled=True
-            ),
-        },
-        hide_index=True,
-        column_order=['Organisme de rattachement', 'Intitulé du poste', 'Localisation du poste', 'Date de première publication', 'Intitulé du poste cliquable', 'Référence', 'Catégorie', 'Versant', 'Nature de l\'emploi']
-    )
-    st.markdown("""
-    <p style='text-align: right;'>Application créée par <a href='https://www.linkedin.com/in/benjaminazoulay/' target='_blank'>Benjamin Azoulay</a></p>
-""", unsafe_allow_html=True)
+    
+    
     # Download buttons
     csv = final_df.to_csv(index=False).encode('utf-8')
     excel = io.BytesIO()
     final_df.to_excel(excel, index=False, engine='openpyxl')
     excel.seek(0)
 
-    col1, col2, col3 = st.columns(3)
+    # Create three columns
+    col1, col2, col3 = st.columns([2, 1, 1])
+
+    # Display the number of offers in the first column
+    with col1:
+        st.write(f"{final_df.shape[0]} offres correspondantes au {lundi}")
+
+    # Create three sub-columns within the third column for the buttons
+    with col3:
+        button_col1, button_col2, button_col3 = st.columns([1, 1, 1])
+        
+        with button_col2:
+            st.download_button(
+                label="CSV",
+                data=csv,
+                file_name="offres.csv",
+                mime="text/csv"
+            )
+        
+        # Empty column to create space
+        with button_col1:
+            st.empty()
+        
+        with button_col3:
+            st.download_button(
+                label="Excel",
+                data=excel,
+                file_name="offres.xlsx",
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            )
+    
+
+    # Create clickable job titles
+    final_df['Intitulé du poste cliquable'] = final_df.apply(lambda row: f'<a href="{row["Lien"]}" target="_blank">{row["Intitulé du poste"]}</a>', axis=1)
+    final_df = final_df.sort_values(by='Date de première publication', ascending=False)
+
+    
+    # CSS to style the table
+    table_style = """
+    <style>
+        .dataframe th {
+            text-align: left !important;
+        }
+    </style>
+    """
+    
+    # Display the CSS
+    st.markdown(table_style, unsafe_allow_html=True)
+
+    # Convert the dataframe to HTML and apply custom classes
+    html_table = final_df[['Organisme de rattachement', 'Intitulé du poste cliquable', 'Localisation du poste', 'Date de première publication', 'Référence', 'Catégorie', 'Versant', 'Nature de l\'emploi']].to_html(escape=False, index=False, classes='dataframe')
+    
+    # Display the styled table
+    st.markdown(html_table, unsafe_allow_html=True)
+
+    st.markdown("""
+    <p style='text-align: right;'>Application créée par <a href='https://www.linkedin.com/in/benjaminazoulay/' target='_blank'>Benjamin Azoulay</a></p>
+""", unsafe_allow_html=True)
+    
     
 
 # Run the app
