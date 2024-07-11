@@ -62,6 +62,7 @@ def main():
     st.sidebar.header("Filtres")
 
     intitule_poste = st.sidebar.text_input("Intitulé du poste", value="data&générative& IA&LLM")
+    organisme = st.sidebar.text_input("Organisme de rattachement", value="")
 
     versant_options = get_unique_values(df['Versant'])
     versant = st.sidebar.multiselect("Versant", options=versant_options, default=[v for v in versant_options if 'Etat' in v])
@@ -93,6 +94,8 @@ def main():
     # Filter by job title
     intitule_keywords = intitule_poste.split('&')
     filtered_df = filtered_df[filtered_df['Intitulé du poste'].str.contains('|'.join(intitule_keywords), case=False, na=False)]
+    organisme_keywords = organisme.split('&')
+    filtered_df = filtered_df[filtered_df['Organisme de rattachement'].str.contains('|'.join(organisme_keywords), case=False, na=False)]
 
     final_df = filtered_df[['Organisme de rattachement', 'Intitulé du poste', 'Localisation du poste', 'Date de première publication', 'Référence', 'Catégorie', 'Versant', 'Nature de l\'emploi']]
     final_df['Date de première publication'] = pd.to_datetime(final_df['Date de première publication'], format='%d/%m/%Y', errors='coerce')
