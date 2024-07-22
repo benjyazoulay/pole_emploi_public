@@ -72,7 +72,7 @@ def main():
     # Sidebar
     st.sidebar.header("Filtres")
 
-    intitule_poste = st.sidebar.text_input("Intitulé du poste", value="data&générative& IA&LLM")
+    intitule_poste = st.sidebar.text_input("Intitulé du poste", value="data&générative& IA&LLM&données")
     organisme = st.sidebar.text_input("Organisme de rattachement", value="")
 
     versant_options = get_unique_values(df['Versant'])
