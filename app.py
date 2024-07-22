@@ -87,12 +87,6 @@ def main():
     localisation_options = get_unique_values(df['Localisation du poste'])
     localisation_poste = st.sidebar.multiselect("Localisation du poste", options=localisation_options, default=[l for l in localisation_options if re.search(r'Paris|91|92|93|94|95|\(77|\(78', l)])
 
-    if st.sidebar.button("Mettre à jour la base (lundi)"):
-        new_df = update_dataframe()
-        if new_df is not None:
-            st.session_state.df = new_df
-            st.success("Base de données mise à jour avec succès!")
-            st.experimental_rerun()
 
     # Filter dataframe
     filtered_df = df.copy()
