@@ -5,6 +5,8 @@ from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
 import re
 import io
+import base64
+import json
 
 # Set page config at the very beginning
 st.set_page_config(layout="wide", page_title="Pôle Emploi public")
@@ -55,6 +57,16 @@ def load_data():
 def get_unique_values(series):
     return series.dropna().unique().tolist()
 
+# Function to encode state to URL
+def encode_state(state):
+    json_string = json.dumps(state)
+    return base64.urlsafe_b64encode(json_string.encode()).decode()
+
+# Function to decode state from URL
+def decode_state(encoded_state):
+    json_string = base64.urlsafe_b64decode(encoded_state.encode()).decode()
+    return json.loads(json_string)
+
 # Main function to run the app
 def main():
     # Banner
@@ -69,24 +81,57 @@ def main():
 
     df = st.session_state.df
 
+    # Check for state in URL
+    if 'state' in st.query_params:
+        state = decode_state(st.query_params['state'])
+    else:
+        state = {
+            'intitule_poste': "data&générative& IA&LLM&données",
+            'organisme': "",
+            'versant': [v for v in get_unique_values(df['Versant']) if 'Etat' in v],
+            'categorie': [c for c in get_unique_values(df['Catégorie']) if 'Catégorie A' in c],
+            'nature_emploi': [n for n in get_unique_values(df['Nature de l\'emploi']) if 'itulaire' in n],
+            'localisation_poste': [l for l in get_unique_values(df['Localisation du poste']) if re.search(r'Paris|91|92|93|94|95|\(77|\(78', l)]
+        }
+
     # Sidebar
     st.sidebar.header("Filtres")
 
-    intitule_poste = st.sidebar.text_input("Intitulé du poste", value="data&générative& IA&LLM&données")
-    organisme = st.sidebar.text_input("Organisme de rattachement", value="")
+    intitule_poste = st.sidebar.text_input("Intitulé du poste", value=state['intitule_poste'])
+    organisme = st.sidebar.text_input("Organisme de rattachement", value=state['organisme'])
 
     versant_options = get_unique_values(df['Versant'])
-    versant = st.sidebar.multiselect("Versant", options=versant_options, default=[v for v in versant_options if 'Etat' in v])
+    versant = st.sidebar.multiselect("Versant", options=versant_options, default=state['versant'])
 
     categorie_options = get_unique_values(df['Catégorie'])
-    categorie = st.sidebar.multiselect("Catégorie", options=categorie_options, default=[c for c in categorie_options if 'Catégorie A' in c])
+    categorie = st.sidebar.multiselect("Catégorie", options=categorie_options, default=state['categorie'])
 
     nature_emploi_options = get_unique_values(df['Nature de l\'emploi'])
-    nature_emploi = st.sidebar.multiselect("Nature de l'emploi", options=nature_emploi_options, default=[n for n in nature_emploi_options if 'itulaire' in n])
+    nature_emploi = st.sidebar.multiselect("Nature de l'emploi", options=nature_emploi_options, default=state['nature_emploi'])
 
     localisation_options = get_unique_values(df['Localisation du poste'])
-    localisation_poste = st.sidebar.multiselect("Localisation du poste", options=localisation_options, default=[l for l in localisation_options if re.search(r'Paris|91|92|93|94|95|\(77|\(78', l)])
+    localisation_poste = st.sidebar.multiselect("Localisation du poste", options=localisation_options, default=state['localisation_poste'])
 
+    # Update state
+    current_state = {
+        'intitule_poste': intitule_poste,
+        'organisme': organisme,
+        'versant': versant,
+        'categorie': categorie,
+        'nature_emploi': nature_emploi,
+        'localisation_poste': localisation_poste
+    }
+
+    # Create shareable link
+    encoded_state = encode_state(current_state)
+    shareable_link = f"{st.get_option('browser.serverAddress')}/?state={encoded_state}"
+    
+    if st.sidebar.button("Générer un lien partageable"):
+        st.sidebar.text_input("Lien partageable", value=shareable_link)
+        st.sidebar.info("Copiez ce lien pour partager l'état actuel de l'application.")
+
+    # Update URL with current state
+    st.query_params['state'] = encoded_state
 
     # Filter dataframe
     filtered_df = df.copy()
