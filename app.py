@@ -126,10 +126,6 @@ def main():
     encoded_state = encode_state(current_state)
     shareable_link = f"{st.get_option('browser.serverAddress')}/?state={encoded_state}"
     
-    if st.sidebar.button("Générer un lien partageable"):
-        st.sidebar.text_input("Lien partageable", value=shareable_link)
-        st.sidebar.info("Copiez ce lien pour partager l'état actuel de l'application.")
-
     # Update URL with current state
     st.query_params['state'] = encoded_state
 
