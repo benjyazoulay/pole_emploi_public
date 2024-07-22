@@ -38,7 +38,14 @@ def update_dataframe():
 # Load initial data
 @st.cache_data
 def load_data():
-    df = pd.read_csv("offres.csv", sep=';', encoding='utf-8')
+    try:
+        df = update_dataframe()
+        if df is None:
+            raise Exception("Unable to update dataframe")
+    except Exception as e:
+        st.warning(f"Impossible de mettre à jour la base de données : {str(e)}. Chargement des données locales.")
+        df = pd.read_csv("offres.csv", sep=';', encoding='utf-8')
+    
     # Convert all object columns to string to avoid issues with float values
     for col in df.select_dtypes(include=['object']):
         df[col] = df[col].astype(str)
@@ -56,7 +63,11 @@ def main():
     st.write("")  # Add some space
 
     # Load data
-    df = load_data()
+    if 'df' not in st.session_state:
+        st.session_state.df = load_data()
+        st.success("Base de données mise à jour avec succès!")
+
+    df = st.session_state.df
 
     # Sidebar
     st.sidebar.header("Filtres")
@@ -73,15 +84,15 @@ def main():
     nature_emploi_options = get_unique_values(df['Nature de l\'emploi'])
     nature_emploi = st.sidebar.multiselect("Nature de l'emploi", options=nature_emploi_options, default=[n for n in nature_emploi_options if 'itulaire' in n])
 
-
     localisation_options = get_unique_values(df['Localisation du poste'])
     localisation_poste = st.sidebar.multiselect("Localisation du poste", options=localisation_options, default=[l for l in localisation_options if re.search(r'Paris|91|92|93|94|95|\(77|\(78', l)])
 
     if st.sidebar.button("Mettre à jour la base (lundi)"):
         new_df = update_dataframe()
         if new_df is not None:
-            df = new_df
+            st.session_state.df = new_df
             st.success("Base de données mise à jour avec succès!")
+            st.experimental_rerun()
 
     # Filter dataframe
     filtered_df = df[
@@ -136,8 +147,6 @@ def main():
     <p style='text-align: right;'>Application créée par <a href='https://www.linkedin.com/in/benjaminazoulay/' target='_blank'>Benjamin Azoulay</a></p>
 """, unsafe_allow_html=True)
     
-    
-
     # Move download buttons to sidebar
     st.sidebar.header("Télécharger les données")
     st.sidebar.download_button(
