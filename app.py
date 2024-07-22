@@ -72,20 +72,20 @@ def main():
     # Sidebar
     st.sidebar.header("Filtres")
 
-    intitule_poste = st.sidebar.text_input("Intitulé du poste", value="data&générative& IA&LLM")
+    intitule_poste = st.sidebar.text_input("Intitulé du poste", value="data&générative& IA&LLM&données")
     organisme = st.sidebar.text_input("Organisme de rattachement", value="")
 
     versant_options = get_unique_values(df['Versant'])
-    versant = st.sidebar.multiselect("Versant", options=versant_options, default=[])
+    versant = st.sidebar.multiselect("Versant", options=versant_options, default=[v for v in versant_options if 'Etat' in v])
 
     categorie_options = get_unique_values(df['Catégorie'])
-    categorie = st.sidebar.multiselect("Catégorie", options=categorie_options, default=[])
+    categorie = st.sidebar.multiselect("Catégorie", options=categorie_options, default=[c for c in categorie_options if 'Catégorie A' in c])
 
     nature_emploi_options = get_unique_values(df['Nature de l\'emploi'])
-    nature_emploi = st.sidebar.multiselect("Nature de l'emploi", options=nature_emploi_options, default=[])
+    nature_emploi = st.sidebar.multiselect("Nature de l'emploi", options=nature_emploi_options, default=[n for n in nature_emploi_options if 'itulaire' in n])
 
     localisation_options = get_unique_values(df['Localisation du poste'])
-    localisation_poste = st.sidebar.multiselect("Localisation du poste", options=localisation_options, default=[])
+    localisation_poste = st.sidebar.multiselect("Localisation du poste", options=localisation_options, default=[l for l in localisation_options if re.search(r'Paris|91|92|93|94|95|\(77|\(78', l)])
 
     if st.sidebar.button("Mettre à jour la base (lundi)"):
         new_df = update_dataframe()
