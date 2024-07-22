@@ -72,20 +72,20 @@ def main():
     # Sidebar
     st.sidebar.header("Filtres")
 
-    intitule_poste = st.sidebar.text_input("Intitulé du poste", value="data&générative& IA&LLM&données")
+    intitule_poste = st.sidebar.text_input("Intitulé du poste", value="data&générative& IA&LLM")
     organisme = st.sidebar.text_input("Organisme de rattachement", value="")
 
     versant_options = get_unique_values(df['Versant'])
-    versant = st.sidebar.multiselect("Versant", options=versant_options, default=[v for v in versant_options if 'Etat' in v])
+    versant = st.sidebar.multiselect("Versant", options=versant_options, default=[])
 
     categorie_options = get_unique_values(df['Catégorie'])
-    categorie = st.sidebar.multiselect("Catégorie", options=categorie_options, default=[c for c in categorie_options if 'Catégorie A' in c])
+    categorie = st.sidebar.multiselect("Catégorie", options=categorie_options, default=[])
 
     nature_emploi_options = get_unique_values(df['Nature de l\'emploi'])
-    nature_emploi = st.sidebar.multiselect("Nature de l'emploi", options=nature_emploi_options, default=[n for n in nature_emploi_options if 'itulaire' in n])
+    nature_emploi = st.sidebar.multiselect("Nature de l'emploi", options=nature_emploi_options, default=[])
 
     localisation_options = get_unique_values(df['Localisation du poste'])
-    localisation_poste = st.sidebar.multiselect("Localisation du poste", options=localisation_options, default=[l for l in localisation_options if re.search(r'Paris|91|92|93|94|95|\(77|\(78', l)])
+    localisation_poste = st.sidebar.multiselect("Localisation du poste", options=localisation_options, default=[])
 
     if st.sidebar.button("Mettre à jour la base (lundi)"):
         new_df = update_dataframe()
@@ -95,12 +95,17 @@ def main():
             st.experimental_rerun()
 
     # Filter dataframe
-    filtered_df = df[
-        df['Versant'].isin(versant) &
-        df['Catégorie'].isin(categorie) &
-        df['Nature de l\'emploi'].isin(nature_emploi) &
-        df['Localisation du poste'].isin(localisation_poste)
-    ]
+    filtered_df = df.copy()
+
+    # Apply filters only if options are selected
+    if versant:
+        filtered_df = filtered_df[filtered_df['Versant'].isin(versant)]
+    if categorie:
+        filtered_df = filtered_df[filtered_df['Catégorie'].isin(categorie)]
+    if nature_emploi:
+        filtered_df = filtered_df[filtered_df['Nature de l\'emploi'].isin(nature_emploi)]
+    if localisation_poste:
+        filtered_df = filtered_df[filtered_df['Localisation du poste'].isin(localisation_poste)]
 
     # Filter by job title
     intitule_keywords = intitule_poste.split('&')
