@@ -174,13 +174,13 @@ def main():
 
     # Define minimum width for each column
     min_widths = {
-        'Organisme de rattachement': 150,
+        'Organisme de rattachement': 200,
         'Intitulé du poste': 200,
         'Localisation du poste': 150,
         'Date de première publication': 150,
         'Référence': 100,
-        'Catégorie': 100,
-        'Versant': 100,
+        'Catégorie': 150,
+        'Versant': 150,
         'Nature de l\'emploi': 150
     }
 
