@@ -68,6 +68,19 @@ def decode_state(encoded_state):
     json_string = base64.urlsafe_b64decode(encoded_state.encode()).decode()
     return json.loads(json_string)
 
+# Function to extract department number from location string
+def extract_department_number(location):
+    match = re.search(r'\b(\d{2,3})\b', location)
+    if match:
+        return int(match.group(1))
+    return float('inf')  # Assign a large number to non-department locations
+
+# Function to get sorted unique values based on department numbers
+def get_sorted_localisation_values(series):
+    unique_values = series.dropna().unique()
+    sorted_values = sorted(unique_values, key=extract_department_number)
+    return sorted_values
+
 # Main function to run the app
 def main():
     # Banner
@@ -110,7 +123,7 @@ def main():
     nature_emploi_options = get_unique_values(df['Nature de l\'emploi'])
     nature_emploi = st.sidebar.multiselect("Nature de l'emploi", options=nature_emploi_options, default=state['nature_emploi'])
 
-    localisation_options = get_unique_values(df['Localisation du poste'])
+    localisation_options = get_sorted_localisation_values(df['Localisation du poste'])
     localisation_poste = st.sidebar.multiselect("Localisation du poste", options=localisation_options, default=state['localisation_poste'])
 
     # Update state
@@ -210,11 +223,9 @@ def main():
 
     AgGrid(final_df, gridOptions=grid_options, height=500, fit_columns_on_grid_load=True, allow_unsafe_jscode=True)
     
-    
-    
     st.markdown("""
     <p style='text-align: right;'>Application créée par <a href='https://www.linkedin.com/in/benjaminazoulay/' target='_blank'>Benjamin Azoulay</a></p>
-""", unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
     
     # Move download buttons to sidebar
     st.sidebar.header("Télécharger les données")
