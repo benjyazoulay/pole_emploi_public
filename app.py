@@ -84,7 +84,10 @@ def get_sorted_localisation_values(series):
 # Main function to run the app
 def main():
     # Banner
-    st.title('[Pôle Emploi public](https://pole-emploi-public.streamlit.app/)')
+    st.markdown("""
+    <h1> <a href="https://pole-emploi-public.streamlit.app/" target="_self" style="color: black; text-decoration: none;">Pôle Emploi public</a> </h1>
+    """, unsafe_allow_html=True)
+    
 
     st.write("")  # Add some space
 
