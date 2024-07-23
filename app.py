@@ -85,7 +85,7 @@ def get_sorted_localisation_values(series):
 def main():
     # Banner
     st.markdown("""
-    <h1> <a href="https://pole-emploi-public.streamlit.app/" target="_self" style="color: black; text-decoration: none;">Pôle Emploi public</a> </h1>
+    <h1> <a href="https://pole-emploi-public.streamlit.app/" target="_self" style="color: inherit; text-decoration: none;">Pôle Emploi public</a> </h1>
     """, unsafe_allow_html=True)
     
 
