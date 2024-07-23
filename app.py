@@ -224,7 +224,7 @@ def main():
 
     grid_options = gb.build()
 
-    AgGrid(final_df, gridOptions=grid_options, height=1000, fit_columns_on_grid_load=True, allow_unsafe_jscode=True)
+    AgGrid(final_df, gridOptions=grid_options, height=700, fit_columns_on_grid_load=True, allow_unsafe_jscode=True)
     
     st.markdown("""
     <p style='text-align: right;'>Application créée par <a href='https://www.linkedin.com/in/benjaminazoulay/' target='_blank'>Benjamin Azoulay</a></p>
