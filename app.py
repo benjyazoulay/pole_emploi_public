@@ -185,8 +185,8 @@ def main():
 
     # AgGrid table
     gb = GridOptionsBuilder.from_dataframe(final_df[['Organisme de rattachement', 'Intitulé du poste', 'Localisation du poste', 'Date de première publication', 'Référence', 'Catégorie', 'Versant', 'Nature de l\'emploi']])
-    gb.configure_pagination()
-    gb.configure_default_column(resizable=True, filterable=True, sortable=True, autoHeight=True, wrapText=True)
+    gb.configure_pagination(paginationAutoPageSize=False, paginationPageSize=20)
+    gb.configure_default_column(resizable=True, filterable=True, sortable=True, autoHeight=True, wrapText=True, cellStyle={"line-height": "18px"})
 
     # Define minimum width for each column
     min_widths = {
@@ -224,7 +224,7 @@ def main():
 
     grid_options = gb.build()
 
-    AgGrid(final_df, gridOptions=grid_options, height=700, fit_columns_on_grid_load=True, allow_unsafe_jscode=True)
+    AgGrid(final_df, gridOptions=grid_options, height=1200, fit_columns_on_grid_load=True, allow_unsafe_jscode=True)
     
     st.markdown("""
     <p style='text-align: right;'>Application créée par <a href='https://www.linkedin.com/in/benjaminazoulay/' target='_blank'>Benjamin Azoulay</a></p>
