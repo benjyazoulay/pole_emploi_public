@@ -1,3 +1,3 @@
 beautifulsoup4
 openpyxl
-st_aggrid
+streamlit-aggrid
