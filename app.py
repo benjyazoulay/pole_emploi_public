@@ -71,7 +71,7 @@ def decode_state(encoded_state):
 # Main function to run the app
 def main():
     # Banner
-    st.title('Pôle Emploi public')
+    st.title('[Pôle Emploi public](https://pole-emploi-public.streamlit.app/)')
 
     st.write("")  # Add some space
 
@@ -151,6 +151,7 @@ def main():
 
     final_df = filtered_df[['Organisme de rattachement', 'Intitulé du poste', 'Localisation du poste', 'Date de première publication', 'Référence', 'Catégorie', 'Versant', 'Nature de l\'emploi']]
     final_df['Date de première publication'] = pd.to_datetime(final_df['Date de première publication'], format='%d/%m/%Y', errors='coerce')
+    final_df['Date de première publication'] = final_df['Date de première publication'].dt.strftime('%d/%m/%Y')
     final_df['Lien'] = 'https://choisirleservicepublic.gouv.fr/nos-offres/filtres/mot-cles/' + final_df['Référence'].astype(str) + '/'
 
     # Download buttons
@@ -170,7 +171,23 @@ def main():
     gb = GridOptionsBuilder.from_dataframe(final_df[['Organisme de rattachement', 'Intitulé du poste', 'Localisation du poste', 'Date de première publication', 'Référence', 'Catégorie', 'Versant', 'Nature de l\'emploi']])
     gb.configure_pagination()
     gb.configure_default_column(resizable=True, filterable=True, sortable=True)
-    
+
+    # Define minimum width for each column
+    min_widths = {
+        'Organisme de rattachement': 150,
+        'Intitulé du poste': 200,
+        'Localisation du poste': 150,
+        'Date de première publication': 150,
+        'Référence': 100,
+        'Catégorie': 100,
+        'Versant': 100,
+        'Nature de l\'emploi': 150
+    }
+
+    # Apply the minimum widths to each column
+    for column, min_width in min_widths.items():
+        gb.configure_column(column, minWidth=min_width)
+
     # Custom JS class for rendering clickable links
     cellrender_jscode = JsCode("""
     class UrlCellRenderer {
@@ -185,12 +202,12 @@ def main():
       }
     }
     """)
-    
+
     # Apply the custom renderer to the 'Intitulé du poste' column
     gb.configure_column("Intitulé du poste", cellRenderer=cellrender_jscode)
 
     grid_options = gb.build()
-    
+
     AgGrid(final_df, gridOptions=grid_options, height=500, fit_columns_on_grid_load=True, allow_unsafe_jscode=True)
     
     
