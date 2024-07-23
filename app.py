@@ -7,6 +7,7 @@ import re
 import io
 import base64
 import json
+from st_aggrid import AgGrid, GridOptionsBuilder, JsCode
 
 # Set page config at the very beginning
 st.set_page_config(layout="wide", page_title="Pôle Emploi public")
@@ -159,30 +160,41 @@ def main():
     excel.seek(0)
 
     # Create clickable job titles
-    final_df['Intitulé du poste'] = final_df.apply(lambda row: f'<a href="{row["Lien"]}" target="_blank">{row["Intitulé du poste"]}</a>', axis=1)
+    #final_df['Intitulé du poste'] = final_df.apply(lambda row: f'<a href="{row["Lien"]}" target="_blank">{row["Intitulé du poste"]}</a>', axis=1)
     final_df = final_df.sort_values(by='Date de première publication', ascending=False)
 
     lundi = (datetime.now() - timedelta(days=datetime.now().weekday() + 1)).strftime("%d-%m-%Y")
     st.write(f"{final_df.shape[0]} offres correspondantes au {lundi}")
-    
-    # CSS to style the table
-    table_style = """
-    <style>
-        .dataframe th {
-            text-align: left !important;
-        }
-    </style>
-    """
-    
-    # Display the CSS
-    st.markdown(table_style, unsafe_allow_html=True)
 
-    # Convert the dataframe to HTML and apply custom classes
-    html_table = final_df[['Organisme de rattachement', 'Intitulé du poste', 'Localisation du poste', 'Date de première publication', 'Référence', 'Catégorie', 'Versant', 'Nature de l\'emploi']].to_html(escape=False, index=False, classes='dataframe')
+    # AgGrid table
+    gb = GridOptionsBuilder.from_dataframe(final_df[['Organisme de rattachement', 'Intitulé du poste', 'Localisation du poste', 'Date de première publication', 'Référence', 'Catégorie', 'Versant', 'Nature de l\'emploi']])
+    gb.configure_pagination()
+    gb.configure_default_column(resizable=True, filterable=True, sortable=True)
     
-    # Display the styled table
-    st.markdown(html_table, unsafe_allow_html=True)
+    # Custom JS class for rendering clickable links
+    cellrender_jscode = JsCode("""
+    class UrlCellRenderer {
+      init(params) {
+        this.eGui = document.createElement('a');
+        this.eGui.innerText = params.value;
+        this.eGui.setAttribute('href', 'https://choisirleservicepublic.gouv.fr/nos-offres/filtres/mot-cles/' + params.data.Référence + '/');
+        this.eGui.setAttribute('target', "_blank");
+      }
+      getGui() {
+        return this.eGui;
+      }
+    }
+    """)
+    
+    # Apply the custom renderer to the 'Intitulé du poste' column
+    gb.configure_column("Intitulé du poste", cellRenderer=cellrender_jscode)
 
+    grid_options = gb.build()
+    
+    AgGrid(final_df, gridOptions=grid_options, height=500, fit_columns_on_grid_load=True, allow_unsafe_jscode=True)
+    
+    
+    
     st.markdown("""
     <p style='text-align: right;'>Application créée par <a href='https://www.linkedin.com/in/benjaminazoulay/' target='_blank'>Benjamin Azoulay</a></p>
 """, unsafe_allow_html=True)
