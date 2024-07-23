@@ -10,7 +10,7 @@ import json
 from st_aggrid import AgGrid, GridOptionsBuilder, JsCode
 
 # Set page config at the very beginning
-st.set_page_config(layout="wide", page_title="Pôle Emploi public")
+st.set_page_config(layout="wide", page_title="Pôle Emploi Public")
 
 # Function to update the dataframe
 def update_dataframe():
@@ -85,7 +85,7 @@ def get_sorted_localisation_values(series):
 def main():
     # Banner
     st.markdown("""
-    <h1> <a href="https://pole-emploi-public.streamlit.app/" target="_self" style="color: inherit; text-decoration: none;">Pôle Emploi public</a> </h1>
+    <h1> <a href="https://pole-emploi-public.streamlit.app/" target="_self" style="color: inherit; text-decoration: none;">Pôle Emploi Public</a> </h1>
     """, unsafe_allow_html=True)
     
 
