@@ -39,7 +39,7 @@ def update_dataframe():
         return None
 
 # Load initial data
-# @st.cache_data
+@st.cache_data(allow_output_mutation=True)
 def load_data():
     try:
         df = update_dataframe()
