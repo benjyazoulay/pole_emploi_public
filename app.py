@@ -8,7 +8,7 @@ import io
 import base64
 import json
 from st_aggrid import AgGrid, GridOptionsBuilder, JsCode
-
+import unicodedata
 # Set page config at the very beginning
 st.set_page_config(layout="wide", page_title="Pôle Emploi Public")
 
@@ -168,7 +168,7 @@ def main():
     final_df = filtered_df[['Organisme de rattachement', 'Intitulé du poste', 'Localisation du poste', 'Date de première publication', 'Référence', 'Catégorie', 'Versant', 'Nature de l\'emploi']]
     final_df['Date de première publication'] = pd.to_datetime(final_df['Date de première publication'], format='%d/%m/%Y', errors='coerce')
     #final_df['Date de première publication'] = final_df['Date de première publication'].dt.strftime('%d/%m/%Y')
-    final_df['Lien'] = 'https://choisirleservicepublic.gouv.fr/nos-offres/filtres/mot-cles/' + final_df['Référence'].astype(str) + '/'
+    final_df['Lien'] = 'https://choisirleservicepublic.gouv.fr/offre-emploi/' + final_df['Intitulé du poste'].apply(lambda x: unicodedata.normalize('NFD', x).encode('ascii', 'ignore').decode('utf-8').lower().replace(' ', '-')) +"-" + final_df['Référence'].astype(str) + '/'
 
     # Download buttons
     csv = final_df.to_csv(index=False).encode('utf-8')
