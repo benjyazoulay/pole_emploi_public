@@ -165,7 +165,7 @@ def main():
     organisme_keywords = organisme.split('&')
     filtered_df = filtered_df[filtered_df['Organisme de rattachement'].str.contains('|'.join(organisme_keywords), case=False, na=False)]
 
-    final_df = filtered_df[['Organisme de rattachement', 'Intitulé du poste', 'Localisation du poste', 'Date de première publication', 'Référence', 'Catégorie', 'Versant', 'Nature de l\'emploi']]
+    final_df = filtered_df[['Organisme de rattachement', 'Intitulé du poste', 'Localisation du poste', 'Date de première publication', 'Référence', 'Catégorie', 'Versant', 'Nature de l\'emploi']].copy()
     final_df['Date de première publication'] = pd.to_datetime(final_df['Date de première publication'], format='%d/%m/%Y', errors='coerce')
     #final_df['Date de première publication'] = final_df['Date de première publication'].dt.strftime('%d/%m/%Y')
     final_df.loc[:, 'Lien'] = ( 'https://choisirleservicepublic.gouv.fr/offre-emploi/' + final_df['Intitulé du poste'].str.lower().str.replace(' ', '-') +  "-" + final_df['Référence'].astype(str) + '/')    
