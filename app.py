@@ -206,16 +206,37 @@ def main():
     # Custom JS class for rendering clickable links
     cellrender_jscode = JsCode("""
     class UrlCellRenderer {
-      init(params) {
+    init(params) {
         this.eGui = document.createElement('a');
+
+        // Fonction pour supprimer l'accentuation et les caractères spéciaux
+        function cleanString(str) {
+        // Supprimer l'accentuation
+        let cleanedStr = str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        // Supprimer les parenthèses, guillemets, slashs et autres caractères spéciaux
+        cleanedStr = cleanedStr.replace(/[\(\)\"\/\,\:\;\.]/g, '');
+        cleanedStr = cleanedStr.replace(/\'/g, '-');
+        return cleanedStr;
+        }
+
+        // Utilisation des crochets pour accéder aux propriétés avec des espaces
+        const intitule = params.data['Intitulé du poste']
+        ? cleanString(params.data['Intitulé du poste'].toLowerCase()).replace(/ /g, '-')
+        : '';
+        const reference = params.data['Référence']
+        ? params.data['Référence']
+        : '';
+
         this.eGui.innerText = params.value;
-        this.eGui.setAttribute('href', 'https://choisirleservicepublic.gouv.fr/nos-offres/filtres/mot-cles/' + params.data.Référence + '/');
+        this.eGui.setAttribute('href', `https://choisirleservicepublic.gouv.fr/offre-emploi/${intitule}-reference-${reference}/`);
         this.eGui.setAttribute('target', "_blank");
-      }
-      getGui() {
-        return this.eGui;
-      }
     }
+
+    getGui() {
+        return this.eGui;
+    }
+    }
+
     """)
 
     # Apply the custom renderer to the 'Intitulé du poste' column
