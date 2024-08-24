@@ -116,6 +116,23 @@ def get_sorted_localisation_values(series):
     sorted_values = sorted(unique_values, key=extract_department_number)
     return sorted_values
 
+def clean_string(s):
+    if not isinstance(s, str):
+        return s
+    
+    # Normaliser la chaîne pour séparer les caractères de base des accents
+    cleaned_str = unicodedata.normalize('NFD', s)
+    
+    # Supprimer les accents
+    cleaned_str = ''.join([c for c in cleaned_str if unicodedata.category(c) != 'Mn'])
+    
+    # Supprimer les parenthèses, guillemets, slashs et autres caractères spéciaux
+    cleaned_str = cleaned_str.replace('(', '').replace(')', '').replace('"', '').replace('/', '')
+    cleaned_str = cleaned_str.replace(',', '').replace(':', '').replace(';', '').replace('.', '')
+    cleaned_str = cleaned_str.replace("'", '-')
+    
+    return cleaned_str
+
 # Main function to run the app
 def main():
     # Banner
@@ -215,7 +232,12 @@ def main():
     final_df = filtered_df[['Organisme de rattachement', 'Intitulé du poste', 'Localisation du poste', 'Date de première publication', 'Référence', 'Catégorie', 'Versant', 'Nature de l\'emploi']].copy()
     final_df['Date de première publication'] = pd.to_datetime(final_df['Date de première publication'], format='%d/%m/%Y', errors='coerce')
     #final_df['Date de première publication'] = final_df['Date de première publication'].dt.strftime('%d/%m/%Y')
-    final_df.loc[:, 'Lien'] = ( 'https://choisirleservicepublic.gouv.fr/offre-emploi/' + final_df['Intitulé du poste'].str.lower().str.replace(' ', '-') +  "-" + final_df['Référence'].astype(str) + '/')    
+    final_df.loc[:, 'Lien'] = ('https://choisirleservicepublic.gouv.fr/offre-emploi/' +
+                    final_df['Intitulé du poste'].apply(lambda x: clean_string(x.lower()).replace(' ', '-')) +
+                    '-reference-' +
+                    final_df['Référence'].astype(str) +
+                    '/')
+ 
     # Download buttons
     csv = final_df.to_csv(index=False).encode('utf-8')
     excel = io.BytesIO()
