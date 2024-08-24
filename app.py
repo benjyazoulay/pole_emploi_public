@@ -238,7 +238,7 @@ def main():
                     '-reference-' +
                     final_df['Référence'].astype(str) +
                     '/')
- 
+    final_df.loc[:, 'Lien'] = final_df['Lien'].apply(lambda x: clean_string(x.lower()).replace(' ', ''))
     # Download buttons
     csv = final_df.to_csv(index=False).encode('utf-8')
     excel = io.BytesIO()
