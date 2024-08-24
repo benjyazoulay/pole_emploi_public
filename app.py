@@ -32,7 +32,7 @@ st.markdown("""
 
     /* Style spécifique pour les mobiles */
     @media only screen and (max-width: 600px) {
-        img {
+        h1 {
             display: block;
             margin-left: auto;
             margin-right: auto;
