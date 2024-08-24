@@ -128,7 +128,7 @@ def clean_string(s):
     cleaned_str = ''.join([c for c in cleaned_str if unicodedata.category(c) != 'Mn'])
     
     # Supprimer les parenthèses, guillemets, slashs et autres caractères spéciaux
-    cleaned_str = cleaned_str.replace('(', '').replace(')', '').replace('"', '').replace('/', '')
+    cleaned_str = cleaned_str.replace('(', '').replace(')', '').replace('"', '').replace('/', '').replace('«', '').replace('»', '')
     cleaned_str = cleaned_str.replace(',', '').replace(':', '').replace(';', '').replace('.', '')
     cleaned_str = cleaned_str.replace("'", '-')
     
