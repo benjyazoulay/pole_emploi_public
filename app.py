@@ -10,7 +10,42 @@ import json
 from st_aggrid import AgGrid, GridOptionsBuilder, JsCode
 
 # Set page config at the very beginning
-st.set_page_config(layout="wide", page_title="Pôle Emploi Public")
+st.set_page_config(layout="wide", page_title="Pôle Emploi Public", menu_items = None)
+
+# Injecter du CSS pour masquer la barre par défaut de Streamlit
+hide_streamlit_style = """
+    <style>
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
+    </style>
+    """
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+
+st.markdown("""
+    <style>
+    /* Supprimer l'espace en haut de la page */
+    .main .block-container {
+        padding-top: 0 !important;
+        margin-top: -70px !important; /* Ajustez cette valeur si nécessaire */
+    }
+
+    /* Style spécifique pour les mobiles */
+    @media only screen and (max-width: 600px) {
+        img {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 0 !important;
+            padding-top: 0 !important;
+        }
+        .main .block-container {
+            padding-top: 0 !important;
+            margin-top: -70px !important; /* Ajustez cette valeur pour mobile si nécessaire */
+        }
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
 # Function to update the dataframe
 def update_dataframe():
