@@ -8,6 +8,7 @@ import io
 import base64
 import json
 from st_aggrid import AgGrid, GridOptionsBuilder, JsCode
+import unicodedata
 
 # Set page config at the very beginning
 st.set_page_config(layout="wide", page_title="Pôle Emploi Public", menu_items = None)
