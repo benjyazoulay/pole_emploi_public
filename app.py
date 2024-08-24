@@ -27,24 +27,21 @@ st.markdown("""
     /* Supprimer l'espace en haut de la page */
     .main .block-container {
         padding-top: 0 !important;
-        margin-top: -30px !important; /* Ajustez cette valeur si nécessaire */
-    }
-
-    /* Style pour le titre h1 */
-    h1 {
-        margin-top: 0 !important; /* Ajustez cette valeur si nécessaire */
-        padding-top: 0 !important; /* Ajustez cette valeur si nécessaire */
+        margin-top: -40px !important; /* Ajustez cette valeur si nécessaire */
     }
 
     /* Style spécifique pour les mobiles */
     @media only screen and (max-width: 600px) {
-        h1 {
-            margin-top: 0 !important; /* Ajustez cette valeur pour mobile si nécessaire */
-            padding-top: 0 !important; /* Ajustez cette valeur pour mobile si nécessaire */
+        img {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 0 !important;
+            padding-top: 0 !important;
         }
         .main .block-container {
             padding-top: 0 !important;
-            margin-top: -30px !important; /* Ajustez cette valeur pour mobile si nécessaire */
+            margin-top: -40px !important; /* Ajustez cette valeur pour mobile si nécessaire */
         }
     }
     </style>
