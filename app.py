@@ -27,7 +27,7 @@ st.markdown("""
     /* Supprimer l'espace en haut de la page */
     .main .block-container {
         padding-top: 0 !important;
-        margin-top: -40px !important; /* Ajustez cette valeur si nécessaire */
+        margin-top: -30px !important; /* Ajustez cette valeur si nécessaire */
     }
 
     /* Style spécifique pour les mobiles */
@@ -41,7 +41,7 @@ st.markdown("""
         }
         .main .block-container {
             padding-top: 0 !important;
-            margin-top: -40px !important; /* Ajustez cette valeur pour mobile si nécessaire */
+            margin-top: -30px !important; /* Ajustez cette valeur pour mobile si nécessaire */
         }
     }
     </style>
@@ -120,7 +120,19 @@ def get_sorted_localisation_values(series):
 def main():
     # Banner
     st.markdown("""
-    <h1> <a href="https://pole-emploi-public.streamlit.app/" target="_self" style="color: inherit; text-decoration: none;">Pôle Emploi Public</a> </h1>
+    <style>
+    /* Style spécifique pour les mobiles */
+    @media only screen and (max-width: 600px) {
+        h1 {
+            text-align: center; /* Centre le texte */
+        }
+    }
+    </style>
+    <h1> 
+        <a href="https://pole-emploi-public.streamlit.app/" target="_self" style="color: inherit; text-decoration: none;">
+            Pôle Emploi Public
+        </a> 
+    </h1>
     """, unsafe_allow_html=True)
     
 
