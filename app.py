@@ -11,7 +11,7 @@ from st_aggrid import AgGrid, GridOptionsBuilder, JsCode
 import unicodedata
 
 # Set page config at the very beginning
-st.set_page_config(layout="wide", page_title="Pôle Emploi Public", menu_items = None)
+st.set_page_config(layout="wide", page_title="Pôle Emploi Public", page_icon="https://github.com/user-attachments/assets/e376bdba-3b42-43d2-ba7e-0b2d6845aa09", menu_items = None)
 
 # Injecter du CSS pour masquer la barre par défaut de Streamlit
 hide_streamlit_style = """
