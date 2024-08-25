@@ -179,15 +179,15 @@ def main():
     # Sidebar
     st.sidebar.header("Filtres")
     # Injecter du CSS pour rogner la barre latérale
-    sidebar_style = """
+    sidebar_header_style = """
         <style>
-        [data-testid="stSidebarUserContent"] .block-container {
-            padding-top: 0px; /* Ajustez cette valeur pour réduire l'espace au-dessus */
-            margin-top: -40px; /* Ajustez cette valeur pour rogner encore plus */
+        [data-testid="stSidebarHeader"] {
+            padding: 0px !important; /* Réduire le padding à zéro */
+            margin-bottom: -40px !important; /* Ajuster la marge en bas pour réduire la hauteur */
         }
         </style>
         """
-    st.markdown(sidebar_style, unsafe_allow_html=True)
+    st.markdown(sidebar_header_style, unsafe_allow_html=True)
     
 
     intitule_poste = st.sidebar.text_input("Intitulé du poste", value=state['intitule_poste'])
