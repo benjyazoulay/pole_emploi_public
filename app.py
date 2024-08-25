@@ -28,7 +28,7 @@ st.markdown("""
     /* Supprimer l'espace en haut de la page */
     .main .block-container {
         padding-top: 0 !important;
-        margin-top: -10px !important; /* Ajustez cette valeur si nécessaire */
+        margin-top: -20px !important; /* Ajustez cette valeur si nécessaire */
     }
 
     /* Style spécifique pour les mobiles */
