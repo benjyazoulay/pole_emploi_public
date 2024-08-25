@@ -183,7 +183,7 @@ def main():
         <style>
         [data-testid="stSidebarHeader"] {
             padding: 0px !important; /* Réduire le padding à zéro */
-            margin-bottom: -40px !important; /* Ajuster la marge en bas pour réduire la hauteur */
+            margin-bottom: -30px !important; /* Ajuster la marge en bas pour réduire la hauteur */
         }
         </style>
         """
