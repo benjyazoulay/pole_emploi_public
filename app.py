@@ -45,6 +45,16 @@ st.markdown("""
             margin-top: -10px !important; /* Ajustez cette valeur pour mobile si nécessaire */
         }
     }
+
+    /* Rogner l'espace entre le bouton de la sidebar et son contenu */
+    .css-qrbaxs {
+        padding-top: 0 !important; /* Réduit l'espace au-dessus du contenu de la sidebar */
+    }
+
+    /* Réduire l'espace à l'intérieur de la sidebar */
+    .css-1d391kg {
+        padding-top: 0px !important;
+    }
     </style>
     """, unsafe_allow_html=True)
 
