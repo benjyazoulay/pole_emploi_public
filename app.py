@@ -181,9 +181,9 @@ def main():
     # Injecter du CSS pour rogner la barre latérale
     sidebar_style = """
         <style>
-        [data-testid="stSidebar"] .block-container {
+        [data-testid="stSidebarUserContent"] .block-container {
             padding-top: 0px; /* Ajustez cette valeur pour réduire l'espace au-dessus */
-            margin-top: -20px; /* Ajustez cette valeur pour rogner encore plus */
+            margin-top: -40px; /* Ajustez cette valeur pour rogner encore plus */
         }
         </style>
         """
