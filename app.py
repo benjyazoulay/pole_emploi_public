@@ -45,16 +45,6 @@ st.markdown("""
             margin-top: -10px !important; /* Ajustez cette valeur pour mobile si nécessaire */
         }
     }
-
-    /* Rogner l'espace entre le bouton de la sidebar et son contenu */
-    .css-qrbaxs {
-        padding-top: 0 !important; /* Réduit l'espace au-dessus du contenu de la sidebar */
-    }
-
-    /* Réduire l'espace à l'intérieur de la sidebar */
-    .css-1d391kg {
-        padding-top: 0px !important;
-    }
     </style>
     """, unsafe_allow_html=True)
 
@@ -188,6 +178,17 @@ def main():
 
     # Sidebar
     st.sidebar.header("Filtres")
+    # Injecter du CSS pour rogner la barre latérale
+    sidebar_style = """
+        <style>
+        [data-testid="stSidebar"] .block-container {
+            padding-top: 0px; /* Ajustez cette valeur pour réduire l'espace au-dessus */
+            margin-top: -20px; /* Ajustez cette valeur pour rogner encore plus */
+        }
+        </style>
+        """
+    st.markdown(sidebar_style, unsafe_allow_html=True)
+    
 
     intitule_poste = st.sidebar.text_input("Intitulé du poste", value=state['intitule_poste'])
     organisme = st.sidebar.text_input("Organisme de rattachement", value=state['organisme'])
