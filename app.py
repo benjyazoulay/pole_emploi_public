@@ -42,7 +42,7 @@ st.markdown("""
         }
         .main .block-container {
             padding-top: 0 !important;
-            margin-top: -40px !important; /* Ajustez cette valeur pour mobile si nécessaire */
+            margin-top: -30px !important; /* Ajustez cette valeur pour mobile si nécessaire */
         }
     }
     </style>
