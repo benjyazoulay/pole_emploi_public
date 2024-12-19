@@ -1,3 +1,4 @@
 beautifulsoup4
 openpyxl
 streamlit-aggrid
+unicodedata2
