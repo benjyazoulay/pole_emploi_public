@@ -1,64 +1,41 @@
 import streamlit as st
 import pandas as pd
 import requests
+from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
 import re
 import io
 import base64
 import json
 from st_aggrid import AgGrid, GridOptionsBuilder, JsCode
-import unicodedata
 
 # Set page config at the very beginning
-st.set_page_config(layout="wide", page_title="Pôle Emploi Public", page_icon="https://github.com/user-attachments/assets/e376bdba-3b42-43d2-ba7e-0b2d6845aa09", menu_items = None)
+st.set_page_config(layout="wide", page_title="Pôle Emploi Public")
 
-# Injecter du CSS pour masquer la barre par défaut de Streamlit
-hide_streamlit_style = """
-    <style>
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    header {visibility: hidden;}
-    </style>
-    """
-st.markdown(hide_streamlit_style, unsafe_allow_html=True)
-
-st.markdown("""
-    <style>
-    /* Supprimer l'espace en haut de la page */
-    .main .block-container {
-        padding-top: 0 !important;
-        margin-top: -40px !important; /* Ajustez cette valeur si nécessaire */
-    }
-
-    /* Style spécifique pour les mobiles */
-    @media only screen and (max-width: 600px) {
-        img {
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-            margin-top: 0 !important;
-            padding-top: 0 !important;
-        }
-        .main .block-container {
-            padding-top: 0 !important;
-            margin-top: -30px !important; /* Ajustez cette valeur pour mobile si nécessaire */
-        }
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
-# Function to update the dataframe from Hugging Face
+# Function to update the dataframe
 def update_dataframe():
-    # URL of the CSV file on Hugging Face
-    csv_url = "https://huggingface.co/datasets/BenjaminAzoulay/choisirleservicepublic/resolve/main/offres_historique.csv"
+    monday = (datetime.now() - timedelta(days=datetime.now().weekday() + 1)).strftime("%Y%m%d")
     
-    try:
+    # URL of the page to scrape
+    page_url = "https://www.data.gouv.fr/fr/datasets/6322e99e12175f7eb26ff465/"
+    
+    # Read the HTML content of the page
+    response = requests.get(page_url)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    
+    # Use a regular expression to extract the CSV file URL
+    pattern = f'"name": "offres-datagouv-{monday}.csv", "url": "(https://www.data.gouv.fr/fr/datasets/r/[^"]+)"'
+    match = re.search(pattern, str(soup))
+    
+    if match:
+        csv_url = match.group(1)
         # Download the CSV file
         response = requests.get(csv_url)
-        df = pd.read_csv(io.StringIO(response.content.decode('utf-8')), sep=',', encoding='utf-8')
+        df = pd.read_csv(io.StringIO(response.content.decode('utf-8')), sep=';')
         return df
-    except Exception as e:
-        st.error(f"Erreur lors du téléchargement du CSV depuis Hugging Face : {str(e)}")
+    else:
+        st.error("CSV file URL not found.")
+        st.error(pattern)
         return None
 
 # Load initial data
@@ -104,40 +81,11 @@ def get_sorted_localisation_values(series):
     sorted_values = sorted(unique_values, key=extract_department_number)
     return sorted_values
 
-def clean_string(s):
-    if not isinstance(s, str):
-        return s
-    
-    # Normaliser la chaîne pour séparer les caractères de base des accents
-    cleaned_str = unicodedata.normalize('NFD', s)
-    
-    # Supprimer les accents
-    cleaned_str = ''.join([c for c in cleaned_str if unicodedata.category(c) != 'Mn'])
-    
-    # Supprimer les parenthèses, guillemets, slashs et autres caractères spéciaux
-    cleaned_str = cleaned_str.replace('(', '').replace(')', '').replace('"', '').replace('/', '').replace('«', '').replace('»', '')
-    cleaned_str = cleaned_str.replace(',', '').replace(':', '').replace(';', '').replace('.', '')
-    cleaned_str = cleaned_str.replace("'", '-')
-    
-    return cleaned_str
-
 # Main function to run the app
 def main():
     # Banner
     st.markdown("""
-    <style>
-    /* Style spécifique pour les mobiles */
-    @media only screen and (max-width: 600px) {
-        h1 {
-            text-align: center; /* Centre le texte */
-        }
-    }
-    </style>
-    <h1> 
-        <a href="https://pole-emploi-public.streamlit.app/" target="_self" style="color: inherit; text-decoration: none;">
-            Pôle Emploi Public
-        </a> 
-    </h1>
+    <h1> <a href="https://pole-emploi-public.streamlit.app/" target="_self" style="color: inherit; text-decoration: none;">Pôle Emploi Public</a> </h1>
     """, unsafe_allow_html=True)
     
 
@@ -160,27 +108,14 @@ def main():
             'versant': [v for v in get_unique_values(df['Versant']) if 'Etat' in v],
             'categorie': [c for c in get_unique_values(df['Catégorie']) if 'Catégorie A' in c],
             'nature_emploi': [n for n in get_unique_values(df['Nature de l\'emploi']) if 'itulaire' in n],
-            'localisation_poste': [l for l in get_unique_values(df['Localisation du poste']) if re.search(r'Paris|91|92|93|94|95|\(77|\(78', l)],
-            'fiche_de_poste': ""
+            'localisation_poste': [l for l in get_unique_values(df['Localisation du poste']) if re.search(r'Paris|91|92|93|94|95|\(77|\(78', l)]
         }
 
     # Sidebar
     st.sidebar.header("Filtres")
-    # Injecter du CSS pour rogner la barre latérale
-    sidebar_header_style = """
-        <style>
-        [data-testid="stSidebarHeader"] {
-            padding: 10px !important; /* Réduire le padding à zéro */
-            margin-bottom: -50px !important; /* Ajuster la marge en bas pour réduire la hauteur */
-        }
-        </style>
-        """
-    st.markdown(sidebar_header_style, unsafe_allow_html=True)
-    
 
     intitule_poste = st.sidebar.text_input("Intitulé du poste", value=state['intitule_poste'])
     organisme = st.sidebar.text_input("Organisme de rattachement", value=state['organisme'])
-    fiche_de_poste = st.sidebar.text_input("Recherche dans la fiche de poste", value=state['fiche_de_poste'])
 
     versant_options = get_unique_values(df['Versant'])
     versant = st.sidebar.multiselect("Versant", options=versant_options, default=state['versant'])
@@ -201,8 +136,7 @@ def main():
         'versant': versant,
         'categorie': categorie,
         'nature_emploi': nature_emploi,
-        'localisation_poste': localisation_poste,
-        'fiche_de_poste': fiche_de_poste
+        'localisation_poste': localisation_poste
     }
 
     # Create shareable link
@@ -214,9 +148,6 @@ def main():
 
     # Filter dataframe
     filtered_df = df.copy()
-
-    # Filter by alive column
-    filtered_df = filtered_df[filtered_df['alive'] == "True"]
 
     # Apply filters only if options are selected
     if versant:
@@ -231,8 +162,6 @@ def main():
     # Filter by job title
     intitule_keywords = intitule_poste.split('&')
     filtered_df = filtered_df[filtered_df['Intitulé du poste'].str.contains('|'.join(intitule_keywords), case=False, na=False)]
-    
-    # Filter by organisme de rattachement
     organisme_keywords = organisme.split('&')
     filtered_df = filtered_df[filtered_df['Organisme de rattachement'].str.contains('|'.join(organisme_keywords), case=False, na=False)]
 
@@ -247,6 +176,7 @@ def main():
     excel.seek(0)
 
     # Create clickable job titles
+    #final_df['Intitulé du poste'] = final_df.apply(lambda row: f'<a href="{row["Lien"]}" target="_blank">{row["Intitulé du poste"]}</a>', axis=1)
     final_df = final_df.sort_values(by='Date de première publication', ascending=False)
 
     lundi = (datetime.now() - timedelta(days=datetime.now().weekday() + 1)).strftime("%d-%m-%Y")
@@ -272,9 +202,6 @@ def main():
     # Apply the minimum widths to each column
     for column, min_width in min_widths.items():
         gb.configure_column(column, minWidth=min_width)
-
-    # Hide the 'fiche_de_poste' column but keep it searchable
-    gb.configure_column('fiche_de_poste', hide=True)
 
     # Custom JS class for rendering clickable links
     cellrender_jscode = JsCode("""
@@ -309,6 +236,7 @@ def main():
         return this.eGui;
     }
     }
+
     """)
 
     # Apply the custom renderer to the 'Intitulé du poste' column
@@ -318,7 +246,9 @@ def main():
 
     AgGrid(final_df, gridOptions=grid_options, height=1200, fit_columns_on_grid_load=True, allow_unsafe_jscode=True)
     
-    st.markdown("""<p style='text-align: right;'>Application créée par <a href='https://www.linkedin.com/in/benjaminazoulay/' target='_blank'>Benjamin Azoulay</a></p>""", unsafe_allow_html=True)
+    st.markdown("""
+    <p style='text-align: right;'>Application créée par <a href='https://www.linkedin.com/in/benjaminazoulay/' target='_blank'>Benjamin Azoulay</a></p>
+    """, unsafe_allow_html=True)
     
     # Move download buttons to sidebar
     st.sidebar.header("Télécharger les données")
