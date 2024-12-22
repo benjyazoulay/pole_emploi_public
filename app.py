@@ -8,6 +8,7 @@ import base64
 import json
 from st_aggrid import AgGrid, GridOptionsBuilder, JsCode
 import unicodedata
+import sys
 
 # Set page config at the very beginning
 st.set_page_config(layout="wide", page_title="Pôle Emploi Public", page_icon="https://github.com/user-attachments/assets/e376bdba-3b42-43d2-ba7e-0b2d6845aa09", menu_items = None)
@@ -49,14 +50,32 @@ st.markdown("""
 
 # Function to update the dataframe from Hugging Face
 def update_dataframe():
-    # URL of the CSV file on Hugging Face
+    # URL du fichier CSV sur Hugging Face
     csv_url = "https://huggingface.co/datasets/BenjaminAzoulay/choisirleservicepublic/resolve/main/offres_historique.csv"
-    
     try:
-        # Download the CSV file
-        response = requests.get(csv_url)
-        df = pd.read_csv(io.StringIO(response.content.decode('utf-8')), sep=',', encoding='utf-8')
-        # df = pd.read_csv("offres_historique.csv", sep=',', encoding='utf-8')
+        # Téléchargement du fichier CSV avec un stream
+        response = requests.get(csv_url, stream=True)
+        response.raise_for_status()  # Vérifie si la requête a réussi
+
+        # Récupération de la taille totale du fichier
+        total_size = int(response.headers.get('content-length', 0))
+        download_size = 0
+
+        # Lecture et écriture des données en chunks
+        chunks = []
+        for chunk in response.iter_content(chunk_size=8192): 
+            if chunk:  # filtre les chunks vides
+                chunks.append(chunk)
+                download_size += len(chunk)
+                # Affichage de la progression
+                progress = (download_size / total_size) * 100
+                sys.stdout.write(f"\rTéléchargement en cours : {progress:.2f}%")
+                sys.stdout.flush()
+
+        # Jointure des chunks en une seule chaîne
+        csv_content = b''.join(chunks)
+        df = pd.read_csv(io.StringIO(csv_content.decode('utf-8')), sep=',', encoding='utf-8')
+        print("\nTéléchargement terminé.")
         return df
     except Exception as e:
         st.error(f"Erreur lors du téléchargement du CSV depuis Hugging Face : {str(e)}")
