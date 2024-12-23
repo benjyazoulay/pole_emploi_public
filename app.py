@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import requests
+from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
 import re
 import io
